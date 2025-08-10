@@ -9,7 +9,7 @@ import { Project } from './component/sections/Project';
 import { Footer } from './component/Footer';
 import { Contact } from './component/sections/Contact';
 import "./index.css";
-import { SplashCursor } from './component/SplashCursor';
+// import { SplashCursor } from './component/SplashCursor';
 
 
 
@@ -24,7 +24,7 @@ function App() {
        className={`relative min-h-screen transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"       
       } bg-black text-gray-100 `}
       >
-        <SplashCursor />
+        {/* <SplashCursor /> */}
         <Navbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
         <MobileMenu menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
         <Home />
