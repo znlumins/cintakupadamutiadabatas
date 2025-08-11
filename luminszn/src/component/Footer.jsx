@@ -5,21 +5,25 @@ import { FaGithub, FaInstagram, FaWhatsapp, FaTwitter, FaDiscord, FaTimes, FaCam
 // Pastikan path ini benar dan file 'input_file_0.png' adalah versi yang transparan.
 import templateImage from '../pct/input_file_0.png'; 
 
-// --- DATA UNTUK FOOTER ---
+// --- DATA UNTUK FOOTER (SUDAH DIUBAH) ---
 const socialLinks = [
-  { href: 'https://github.com/GipsyDanger-dev', Icon: FaGithub, name: 'GitHub' },
+  // DIUBAH: Link GitHub utama diubah ke znlumins
+  { href: 'https://github.com/znlumins', Icon: FaGithub, name: 'GitHub' }, 
   { href: 'https://www.instagram.com/adam_akmal18/?hl=id', Icon: FaInstagram, name: 'Instagram' },
   { href: 'https://discordapp.com/users/747396909399801856', Icon: FaDiscord, name: 'Discord' },
   { href: 'https://x.com/AdamF184953', Icon: FaTwitter, name: 'Twitter' },
   { href: 'https://wa.me/6281229497848', Icon: FaWhatsapp, name: 'WhatsApp' },
 ];
 
-const apiEndpoints = Array(30).fill("GipsyDanger-dev™");
+// DIUBAH: Teks berjalan diubah menjadi znlumins.dev
+const apiEndpoints = Array(30).fill("znlumins.dev™");
 
-// --- DATA UNTUK EASTER EGG ---
+// --- DATA UNTUK EASTER EGG (SUDAH DIUBAH DAN DIATUR ULANG) ---
 const creators = [
-  { name: 'GipsyDanger-dev (Adam Fairuz)', role: 'Lead Developer & Designer', link: 'https://github.com/GipsyDanger-dev' },
-  { name: 'znlumins (Daffa Ahmad Al Attas)', role: 'Front-End Refinement & UI/UX', link: 'https://github.com/znlumins' },
+  // DIUBAH: znlumins sekarang menjadi Lead
+  { name: 'znlumins.dev (Daffa Ahmad Al Attas)', role: 'Lead Developer & Designer', link: 'https://github.com/znlumins' },
+  // DIUBAH: GipsyDanger-dev menjadi kontributor
+  { name: 'GipsyDanger-dev (Adam Fairuz)', role: 'Initial Concept & Contributor', link: 'https://github.com/GipsyDanger-dev' },
   { name: 'Gemini AI by Google', role: 'Code Assistant & Idea Generator', link: null },
 ];
 
@@ -72,7 +76,7 @@ const PHOTO_SLOTS = [
 ];
 
 
-// --- Helper function untuk logika "cover" (Logika ini sudah benar) ---
+// --- Helper function untuk logika "cover" ---
 function drawAndCover(ctx, img, slot) {
   const { x, y, w, h } = slot;
   const imgRatio = img.width / img.height;
@@ -191,8 +195,7 @@ const PhotoStripModal = ({ onClose }) => {
                     img.onload = () => resolve(img);
                 }))
             );
-
-            // LANGKAH 1: Gambar dulu FOTO Anda ke kanvas sesuai slotnya
+            
             loadedCaptures.forEach((userPhoto, index) => {
                 const slot = PHOTO_SLOTS[index];
                 if (slot) {
@@ -200,7 +203,6 @@ const PhotoStripModal = ({ onClose }) => {
                 }
             });
             
-            // LANGKAH 2: TIMPA semuanya dengan TEMPLATE sebagai lapisan paling atas
             ctx.drawImage(template, 0, 0);
 
             setFinalImage(canvas.toDataURL('image/png'));
@@ -345,8 +347,9 @@ export const Footer = () => {
       </div>
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6">
         <div className="sm:flex sm:items-center sm:justify-between">
+          {/* DIUBAH: Teks hak cipta dan link diubah ke znlumins */}
           <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400 cursor-pointer select-none" onClick={handleCopyrightClick} title="Sesuatu yang tersembunyi... (atau coba Konami code?)">
-            © 2025 <a href="https://github.com/GipsyDanger-dev" className="hover:underline">GipsyDanger-dev™</a>. All Rights Reserved.
+            © 2025 <a href="https://github.com/znlumins" className="hover:underline">znlumins.dev™</a>. All Rights Reserved.
           </span>
           <div className="flex mt-4 sm:justify-center sm:mt-0 space-x-5">
              {socialLinks.map(({ href, Icon, name }) => (
