@@ -1,75 +1,119 @@
+import React, { useState } from "react";
 import { RevealOnScroll } from "../RevealOnScroll";
-import { FiSend, FiMail, FiMapPin } from 'react-icons/fi'; // Menggunakan ikon yang lebih konsisten
+import { FiSend } from "react-icons/fi";
 
 export const Contact = () => {
-    return (
-        <section
-            id="contact"
-            className="min-h-screen w-full flex items-center justify-center py-20 px-4 bg-modern-dark" // Pastikan ada background yang sesuai
-        >
-            <RevealOnScroll>
-                {/* Container utama yang lebih lebar untuk layout full */}
-                <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+  const [loading, setLoading] = useState(false);
+  const [notif, setNotif] = useState("");
 
-                    {/* === KOLOM KIRI: AJAKAN & INFO === */}
-                    <div className="text-center lg:text-left">
-                        <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                            Let's Build
-                            <br />
-                            Something Great.
-                        </h2>
-                        <p className="text-gray-400 text-lg mb-12 max-w-lg mx-auto lg:mx-0">
-                            Punya ide brilian atau butuh bantuan untuk proyek Anda? Saya siap membantu mewujudkannya. Hubungi saya melalui form di samping.
-                        </p>
-                        
-                        {/* Info kontak yang relevan */}
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-center lg:justify-start space-x-3">
-                                <FiMail className="text-cyan-400" size={20} />
-                                <span className="text-gray-300">adamfairuz7@student.ub.ac.id</span>
-                            </div>
-                            <div className="flex items-center justify-center lg:justify-start space-x-3">
-                                <FiMapPin className="text-cyan-400" size={20} />
-                                <span className="text-gray-300">Cilacap, Indonesia</span>
-                            </div>
-                        </div>
-                    </div>
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-                    {/* === KOLOM KANAN: FORM DENGAN EFEK KACA (GLASSMORPHISM) === */}
-                    <div className="bg-black/20 backdrop-blur-md p-8 sm:p-12 rounded-2xl border border-white/10">
-                        <form className="space-y-8">
-                            <div className="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
-                                <div className="relative flex-1">
-                                    <input type="text" id="name" name="name" required className="peer w-full bg-transparent border-b-2 border-white/20 pt-4 pb-2 text-white outline-none transition focus:border-cyan-400" placeholder=" " />
-                                    <label htmlFor="name" className="absolute left-0 -top-0 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-focus:-top-0 peer-focus:text-cyan-400 peer-focus:text-sm">Name</label>
-                                </div>
-                                <div className="relative flex-1">
-                                    <input type="email" id="email" name="email" required className="peer w-full bg-transparent border-b-2 border-white/20 pt-4 pb-2 text-white outline-none transition focus:border-cyan-400" placeholder=" " />
-                                    <label htmlFor="email" className="absolute left-0 -top-0 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-focus:-top-0 peer-focus:text-cyan-400 peer-focus:text-sm">Email Address</label>
-                                </div>
-                            </div>
+    const form = e.target;
+    const data = {
+      name: form.name.value,
+      email: form.email.value,
+      message: form.message.value,
+    };
 
-                            <div className="relative">
-                                <textarea id="message" name="message" required
-                                    className="peer w-full h-36 bg-transparent border-b-2 border-white/20 pt-4 pb-2 text-white outline-none transition focus:border-cyan-400 resize-none overflow-y-auto"
-                                    placeholder=" " 
-                                />
-                                <label htmlFor="message" className="absolute left-0 -top-0 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-focus:-top-0 peer-focus:text-cyan-400 peer-focus:text-sm">Your Message</label>
-                            </div>
+    console.log("Form submitted:", data);
 
-                            <div className="pt-2">
-                                <button
-                                    type="submit"
-                                    className="w-full flex items-center justify-center bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 relative overflow-hidden transform hover:-translate-y-1 hover:bg-blue-700 hover:shadow-2xl hover:shadow-blue-500/40"
-                                >
-                                    <span className="mr-2">Send Inquiry</span>
-                                    <FiSend />
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+    // Simulate data submission
+    setTimeout(() => {
+      setNotif("Message sent! (demo) — check console for payload");
+      form.reset();
+      setLoading(false);
+
+      // Hide notification after 3 seconds
+      setTimeout(() => setNotif(""), 3000);
+    }, 1200);
+  };
+
+  return (
+    <section
+      id="contact"
+      className="w-full min-h-screen flex flex-col justify-center items-center bg-black text-white p-4 sm:p-8 md:p-16 overflow-x-hidden" // Ditambahkan overflow-x-hidden
+    >
+      <div className="w-full max-w-5xl mx-auto"> {/* Max-width dilebarkan sedikit */}
+        <RevealOnScroll>
+          {/* Bagian Teks */}
+          <div className="text-center">
+            {/* DIUBAH: Menggunakan font responsif dan whitespace-nowrap */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-wide whitespace-nowrap">
+              Let’s Create Something{" "}
+              <span className="text-cyan-400">Remarkable.</span>
+            </h2>
+            <p className="text-gray-400 text-sm mt-4 max-w-xl mx-auto">
+              I help bring ideas to life with modern and efficient digital
+              solutions. Have a project in mind? I'd love to hear about it.
+            </p>
+          </div>
+
+          {/* Bagian Form */}
+          <div className="mt-12 w-full max-w-xl mx-auto relative">
+            {notif && (
+              <div className="absolute -top-12 left-0 right-0 text-center text-sm text-white bg-green-500/90 py-2 px-4 rounded-lg animate-fade-in">
+                {notif}
+              </div>
+            )}
+            <div className="bg-black p-8 rounded-2xl border border-gray-800 shadow-2xl shadow-cyan-500/10">
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="relative">
+                    <input
+                      type="text" id="name" name="name" required
+                      className="peer w-full bg-transparent border-b-2 border-gray-600 pt-4 pb-2 placeholder-transparent text-white outline-none focus:border-cyan-400"
+                      placeholder="Name"
+                    />
+                    <label
+                      htmlFor="name"
+                      className="absolute left-0 -top-0 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-focus:-top-0 peer-focus:text-cyan-400 peer-focus:text-sm"
+                    >
+                      Name
+                    </label>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="email" id="email" name="email" required
+                      className="peer w-full bg-transparent border-b-2 border-gray-600 pt-4 pb-2 placeholder-transparent text-white outline-none focus:border-cyan-400"
+                      placeholder="Email"
+                    />
+                    <label
+                      htmlFor="email"
+                      className="absolute left-0 -top-0 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-focus:-top-0 peer-focus:text-cyan-400 peer-focus:text-sm"
+                    >
+                      Email Address
+                    </label>
+                  </div>
                 </div>
-            </RevealOnScroll>
-        </section>
-    );
+                <div className="relative">
+                  <textarea
+                    id="message" name="message" required
+                    className="peer w-full h-36 bg-transparent border-b-2 border-gray-600 pt-4 pb-2 placeholder-transparent text-white outline-none focus:border-cyan-400 resize-none"
+                    placeholder="Your Message"
+                  />
+                  <label
+                    htmlFor="message"
+                    className="absolute left-0 -top-0 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-focus:-top-0 peer-focus:text-cyan-400 peer-focus:text-sm"
+                  >
+                    Your Message
+                  </label>
+                </div>
+                <button
+                  type="submit" disabled={loading}
+                  className="w-full flex items-center justify-center bg-cyan-500 hover:bg-cyan-600 text-black py-3 px-6 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-1 disabled:opacity-50"
+                >
+                  {loading ? "Sending..." : "Fire It Away"}
+                  {!loading && <FiSend className="ml-2" />}
+                </button>
+              </form>
+            </div>
+          </div>
+        </RevealOnScroll>
+      </div>
+    </section>
+  );
 };
+
+export default Contact;
