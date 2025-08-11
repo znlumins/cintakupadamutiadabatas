@@ -1,74 +1,144 @@
 import { useState, useEffect } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+
+// Link Unsplash yang stabil
+const galleryImages = [
+  {
+    src: 'https://images.unsplash.com/photo-1550439062-609e1531270e?q=80&w=1740&auto=format=fit=crop',
+    alt: 'Abstract dark background with glowing tech lines'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?q=80&w=1648&auto=format=fit=crop',
+    alt: 'React code on a monitor with a reflective logo'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1599658880436-c61792e70672?q=80&w=1740&auto=format=crop',
+    alt: 'Abstract blue and purple network plexus'
+  }
+];
 
 export const Home = () => {
   const [isReady, setIsReady] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    // Timer ini memicu animasi saat komponen dimuat
     const timer = setTimeout(() => setIsReady(true), 50);
-    return () => clearTimeout(timer);
+    const handleMouseMove = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
   }, []);
 
   return (
-    // --- PERUBAHAN DI SINI ---
-    // 1. Menghapus kelas `relative` dan `overflow-hidden` karena tidak lagi diperlukan.
-    // 2. Menambahkan kelas `bg-black` untuk latar belakang hitam.
-    <section id="home" className="min-h-screen flex items-center justify-center bg-black">
-      
-      {/* Latar Belakang Video telah dihapus */}
-      {/* 
-        <div className="absolute top-0 left-0 w-full h-full z-0">
-          <video autoPlay loop muted playsInline className="object-cover w-full h-full">
-            <source src="/videos/background.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div className="absolute top-0 left-0 w-full h-full bg-black opacity-60"></div>
-        </div> 
-      */}
-      
-      {/* --- PERUBAHAN DI SINI --- */}
-      {/* 1. Menghapus kelas `z-10` karena tidak lagi ada lapisan di bawahnya. */}
-      <div className="text-center px-6 sm:px-4">
-        {/* Judul */}
-        <h1
-          className="text-3xl sm:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent transition-all duration-500 ease-out"
-          style={{ opacity: isReady ? 1 : 0, transform: isReady ? 'translateY(0)' : 'translateY(-20px)' }}
-        >
-          Hi, I'm Gipsy.Dev
-        </h1>
-        
-        {/* Subteks Adaptif */}
-        {/* Versi Singkat Mobile */}
-        <p className="text-gray-300 text-sm sm:hidden mb-8 max-w-sm mx-auto transition-all duration-500 ease-out" style={{ transitionDelay: '200ms', opacity: isReady ? 1 : 0, transform: isReady ? 'translateY(0)' : 'translateY(20px)' }}>
-          Video editor, developer, dan blockchain enthusiast yang menggabungkan kreativitas dan teknologi untuk menciptakan solusi digital inovatif. 🚀
-        </p>
-        {/* Versi Lengkap Desktop */}
-        <p className="text-gray-300 hidden sm:block sm:text-base lg:text-lg mb-8 max-w-sm sm:max-w-xl lg:max-w-2xl mx-auto transition-all duration-500 ease-out" style={{ transitionDelay: '200ms', opacity: isReady ? 1 : 0, transform: isReady ? 'translateY(0)' : 'translateY(20px)' }}>
-          Halo, saya Adam Fairuz Akmal Aryaguna, seorang video editor, developer, dan blockchain enthusiast yang menggabungkan kreativitas dan teknologi dalam setiap proyek. Berpengalaman di Adobe Premiere Pro, After Effects, pengembangan web, dan blockchain. Saya selalu tertarik untuk menciptakan solusi digital inovatif. 🚀
-        </p>
+    <>
+      <style>{`
+        .swiper-pagination-bullet-active { background-color: #3b82f6 !important; }
 
-        {/* Tombol yang selalu sejajar */}
-        <div
-          className="flex flex-row justify-center items-center space-x-4 sm:space-x-6"
-        >
-          <a
-            href="#projects"
-            className="bg-blue-600 text-white py-3 px-8 rounded-full font-semibold text-lg transition-all duration-500 ease-out transform hover:scale-110 hover:bg-blue-700"
-            style={{ transitionDelay: '400ms', opacity: isReady ? 1 : 0, transform: isReady ? 'scale(1)' : 'scale(0.9)' }}
-          >
-            View Project
-          </a>
-          <a
-            href="#contact"
-            className="border-2 border-white text-white py-3 px-8 rounded-full font-semibold text-lg transition-all duration-500 ease-out transform hover:scale-110 hover:bg-white hover:text-gray-900"
-            style={{ transitionDelay: '500ms', opacity: isReady ? 1 : 0, transform: isReady ? 'scale(1)' : 'scale(0.9)' }}
-          >
-            Contact Me
-          </a>
-        </div>
+        @keyframes moveAurora {
+          from { background-position: 0% 50%; }
+          to { background-position: 100% 50%; }
+        }
+
+        .final-bg {
+          background-color: #000;
+          position: relative;
+          isolation: isolate;
+          background-image: 
+            radial-gradient(at 20% 25%, hsla(268, 75%, 50%, 0.15) 0px, transparent 50%),
+            radial-gradient(at 80% 70%, hsla(212, 100%, 50%, 0.15) 0px, transparent 50%);
+          background-size: 200% 200%;
+          animation: moveAurora 20s ease-in-out infinite alternate;
+        }
         
-      </div>
-    </section>
+        .final-bg::before {
+          content: '';
+          position: absolute; inset: 0;
+          z-index: -2;
+          
+          /* === PERUBAHAN DI SINI === */
+          background-image: 
+            /* Gradasi hitam halus di bagian bawah */
+            linear-gradient(to top, hsla(0, 0%, 0%, 1) 0%, transparent 60%),
+            
+            /* Grid pertama (duplikat) */
+            linear-gradient(to right, hsla(210, 30%, 80%, 0.04) 1px, transparent 1px),
+            linear-gradient(to bottom, hsla(210, 30%, 80%, 0.04) 1px, transparent 1px),
+
+            /* Grid kedua (asli) */
+            linear-gradient(to right, hsla(210, 30%, 80%, 0.04) 1px, transparent 1px),
+            linear-gradient(to bottom, hsla(210, 30%, 80%, 0.04) 1px, transparent 1px);
+            
+          background-size: 100% 100%, 50px 50px, 50px 50px, 50px 50px, 50px 50px;
+        }
+
+        .final-bg::after {
+          content: '';
+          position: absolute; inset: 0;
+          z-index: -1;
+          background-image: 
+            linear-gradient(to right, hsla(210, 50%, 80%, 0.1) 1px, transparent 1px),
+            linear-gradient(to bottom, hsla(210, 50%, 80%, 0.1) 1px, transparent 1px);
+          background-size: 50px 50px;
+          mask-image: radial-gradient(300px at var(--mouse-x) var(--mouse-y), black 20%, transparent 100%);
+          -webkit-mask-image: radial-gradient(300px at var(--mouse-x) var(--mouse-y), black 20%, transparent 100%);
+          transition: mask-image 0.1s ease-out;
+        }
+      `}</style>
+      
+      <section 
+        id="home" 
+        className="final-bg min-h-screen flex items-center overflow-hidden"
+        style={{'--mouse-x': `${mousePosition.x}px`, '--mouse-y': `${mousePosition.y}px`}}
+      >
+        <div className="relative z-10 max-w-7xl mx-auto px-4 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+
+            {/* Kolom Kiri */}
+            <div 
+              className="transition-all duration-500 ease-out"
+              style={{ opacity: isReady ? 1 : 0, transform: isReady ? 'translateX(0)' : 'translateX(-20px)' }}
+            >
+              <div className="p-8 text-center md:text-left">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                  Hi, I'm znlumins.
+                </h1>
+                
+                <p className="text-gray-400 hidden sm:block text-sm lg:text-base mb-8 max-w-xl mx-auto md:mx-0">
+                  Hello, I'm Daffa Ahmad Al Attas. An IT enthusiast with a passion for website development and creating innovative digital solutions. 🚀
+                </p>
+
+                <div className="flex flex-row justify-center md:justify-start items-center space-x-4 sm:space-x-6">
+                  <a href="#projects" className="bg-blue-600 text-white py-3 px-8 rounded-full font-semibold text-lg transition-all duration-500 ease-out transform hover:scale-110 hover:bg-blue-700">View Projects</a>
+                  <a href="#contact" className="border-2 border-white text-white py-3 px-8 rounded-full font-semibold text-lg transition-all duration-500 ease-out transform hover:scale-110 hover:bg-white hover:text-gray-900">Contact Me</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Kolom Kanan */}
+            <div 
+              className="w-full mx-auto transition-all duration-500 ease-out rounded-2xl border border-white/10"
+              style={{ transitionDelay: '200ms', opacity: isReady ? 1 : 0, transform: isReady ? 'scale(1)' : 'scale(0.9)', filter: 'drop-shadow(0 0 15px hsla(220, 90%, 60%, 0.2))' }}
+            >
+              <Swiper
+                modules={[Pagination, Autoplay]}
+                pagination={{ clickable: true }}
+                loop={true}
+                autoplay={{ delay: 3000, disableOnInteraction: false }}
+                className="rounded-2xl"
+              >
+                {galleryImages.map((image, index) => ( <SwiperSlide key={index}> <img src={image.src} alt={image.alt} className="w-full h-full object-cover aspect-video"/> </SwiperSlide> ))}
+              </Swiper>
+            </div>
+            
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

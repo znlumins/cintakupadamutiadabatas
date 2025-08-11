@@ -1,37 +1,38 @@
 import { useState, useEffect } from "react";
 
 export const Navbar = () => {
-  // State untuk mengelola status buka/tutup menu (sekarang di dalam komponen ini)
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Efek untuk mencegah scroll pada body saat menu mobile terbuka
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
-
-    // Fungsi cleanup untuk memastikan style dikembalikan jika komponen di-unmount
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [menuOpen]);
 
-  // Fungsi untuk menutup menu (berguna untuk link pada menu mobile)
   const closeMenu = () => {
     setMenuOpen(false);
   };
 
   return (
     <>
-      {/* Navbar Utama */}
       <nav className="fixed top-0 w-full z-40 bg-[rgba(10, 10, 10, 0.8)] backdrop-blur-lg border-b border-white/10 shadow-lg">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
+          {/* 
+            ↓↓↓ PERUBAHAN 1: Tambahkan kelas "relative" di sini ↓↓↓
+          */}
+          <div className="relative flex justify-between items-center h-16">
             {/* Logo */}
             <a href="#home" className="font-mono text-xl font-bold text-white z-50">
-              Gipsy<span className="text-blue-500">.Dev</span>
+              Zn<span className="text-blue-500">lumins.dev</span>
             </a>
 
-            {/* Menu Navigasi Desktop (Tengah) */}
-            <div className="hidden md:flex flex-grow items-center justify-center space-x-8">
+            {/* 
+              ↓↓↓ PERUBAHAN 2: Ubah kelas untuk menu navigasi di sini ↓↓↓
+              Menghapus: "flex-grow", "justify-center"
+              Menambahkan: "absolute", "left-1/2", "top-1/2", "-translate-x-1/2", "-translate-y-1/2"
+            */}
+            <div className="hidden md:flex items-center space-x-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <a href="#home" className="text-gray-300 hover:text-white transition-colors">
                 Home
               </a>
@@ -47,9 +48,9 @@ export const Navbar = () => {
             </div>
 
             {/* Tombol Download CV (Kanan) */}
-            <div className="hidden md:flex items-center">
+            <div className="hidden md:flex items-center z-50">
               <a
-                href="/cv-gipsy.pdf" // GANTI DENGAN PATH CV ANDA
+                href="/cv-gipsy.pdf"
                 download
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors"
               >
@@ -70,7 +71,7 @@ export const Navbar = () => {
         </div>
       </nav>
 
-      {/* Menu Overlay untuk Mobile (Hamburger) */}
+      {/* Menu Overlay untuk Mobile */}
       <div
         className={`md:hidden fixed top-0 left-0 w-full h-screen bg-gray-900 bg-opacity-95 z-30 transform transition-transform duration-300 ease-in-out ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
@@ -88,7 +89,7 @@ export const Navbar = () => {
             Contact
           </a>
           <a
-            href="/cv-gipsy.pdf" // GANTI DENGAN PATH CV ANDA
+            href="/cv-gipsy.pdf"
             download
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors mt-4"
           >
