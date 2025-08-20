@@ -7,11 +7,11 @@ import 'swiper/css/pagination';
 // Link Unsplash yang stabil
 const galleryImages = [
   {
-    src: 'https://images.unsplash.com/photo-1550439062-609e1531270e?q=80&w=1740&auto=format=fit=crop',
+    src: 'https://i.ibb.co.com/CprX459S/2025-02-18-11-33-IMG-0281.jpg?q=80&w=1648&auto=format=fit=crop',
     alt: 'Abstract dark background with glowing tech lines'
   },
   {
-    src: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?q=80&w=1648&auto=format=fit=crop',
+    src: 'https://i.ibb.co.com/Txfxy9sn/DSC00825.jpg?q=80&w=1648&auto=format=fit',
     alt: 'React code on a monitor with a reflective logo'
   },
   {

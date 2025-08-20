@@ -1,44 +1,150 @@
 import React, { useState, useEffect, useRef } from "react";
 import Marquee from "react-fast-marquee";
-import { FaGithub, FaInstagram, FaWhatsapp, FaTwitter, FaDiscord, FaTimes, FaCamera, FaDownload, FaSync, FaPhotoVideo } from "react-icons/fa";
+import { 
+  FaGithub, FaInstagram, FaWhatsapp, FaTwitter, FaDiscord, FaTimes, FaCamera, 
+  FaDownload, FaSync, FaPhotoVideo, FaCodeBranch, FaStar, FaPlus 
+} from "react-icons/fa";
 
-// Pastikan path ini benar dan file 'input_file_0.png' adalah versi yang transparan.
-import templateImage from '../pct/input_file_0.png'; 
+// --- KOMPONEN GITHUB ACTIVITY TICKER (DIPERBAIKI UNTUK VITE) ---
+const GitHubActivityTicker = () => {
+  const GITHUB_USERNAME = "znlumins";
 
-// --- DATA UNTUK FOOTER (SUDAH DIUBAH) ---
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const truncate = (str, n) => {
+    return (str.length > n) ? str.substr(0, n - 1) + '...' : str;
+  };
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      // Membaca token dari import.meta.env (untuk Vite)
+      const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+
+      if (!GITHUB_TOKEN) {
+        setError("GitHub token tidak ditemukan. Pastikan file .env memiliki VITE_GITHUB_TOKEN dan server sudah di-restart.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `https://api.github.com/users/${GITHUB_USERNAME}/events/public`, {
+            headers: {
+              'Authorization': `token ${GITHUB_TOKEN}`
+            }
+          }
+        );
+        if (response.status === 403) {
+            throw new Error('Limit permintaan API GitHub terlampaui. Coba lagi dalam beberapa menit.');
+        }
+        if (!response.ok) {
+          throw new Error(`Gagal mengambil data: ${response.statusText}`);
+        }
+        const data = await response.json();
+        
+        const filteredData = data.filter(event => 
+          event.type === 'PushEvent' || 
+          (event.type === 'CreateEvent' && event.payload.ref_type === 'repository') ||
+          event.type === 'WatchEvent'
+        ).slice(0, 10);
+
+        setActivities(filteredData);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching GitHub data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivities();
+    const intervalId = setInterval(fetchActivities, 300000); // Refresh setiap 5 menit
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const renderEvent = (event) => {
+    const repoName = event.repo.name.split('/')[1];
+    switch (event.type) {
+      case 'PushEvent':
+        const commitMsg = event.payload.commits[0]?.message || 'No commit message';
+        return (
+          <>
+            <FaCodeBranch className="text-cyan-400 flex-shrink-0" />
+            <span className="ml-2 font-bold text-gray-200">COMMIT</span>
+            <span className="ml-2 text-gray-400">to</span>
+            <span className="ml-2 font-semibold text-green-400">{repoName}</span>
+            <span className="ml-3 text-gray-500 italic">"{truncate(commitMsg, 40)}"</span>
+          </>
+        );
+      case 'CreateEvent':
+        return (
+          <>
+            <FaPlus className="text-green-400 flex-shrink-0" />
+            <span className="ml-2 font-bold text-gray-200">CREATED REPO</span>
+            <span className="ml-2 font-semibold text-green-400">{repoName}</span>
+          </>
+        );
+      case 'WatchEvent':
+        return (
+          <>
+            <FaStar className="text-yellow-400 flex-shrink-0" />
+            <span className="ml-2 font-bold text-gray-200">STARRED</span>
+            <span className="ml-2 font-semibold text-green-400">{repoName}</span>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  if (loading) {
+    return <div className="text-gray-400 text-sm mx-8">Memuat aktivitas GitHub @{GITHUB_USERNAME}...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-400 text-sm mx-8">{error}</div>;
+  }
+  
+  if (activities.length === 0) {
+      return <div className="text-gray-500 text-sm mx-8">Tidak ada aktivitas publik terbaru dari @{GITHUB_USERNAME}.</div>
+  }
+
+  return (
+    <div className="flex">
+      {activities.map((activity) => (
+        <div key={activity.id} className="flex items-center mx-6 text-sm font-mono whitespace-nowrap">
+          {renderEvent(activity)}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+
+// --- DATA-DATA & KOMPONEN LAINNYA ---
 const socialLinks = [
-  // DIUBAH: Link GitHub utama diubah ke znlumins
-  { href: 'https://github.com/znlumins', Icon: FaGithub, name: 'GitHub' }, 
+  { href: 'https://github.com/znlumins', Icon: FaGithub, name: 'GitHub' },
   { href: 'https://www.instagram.com/adam_akmal18/?hl=id', Icon: FaInstagram, name: 'Instagram' },
   { href: 'https://discordapp.com/users/747396909399801856', Icon: FaDiscord, name: 'Discord' },
   { href: 'https://x.com/AdamF184953', Icon: FaTwitter, name: 'Twitter' },
   { href: 'https://wa.me/6281229497848', Icon: FaWhatsapp, name: 'WhatsApp' },
 ];
 
-// DIUBAH: Teks berjalan diubah menjadi znlumins.dev
-const apiEndpoints = Array(30).fill("znlumins.dev™");
-
-// --- DATA UNTUK EASTER EGG (SUDAH DIUBAH DAN DIATUR ULANG) ---
 const creators = [
-  // DIUBAH: znlumins sekarang menjadi Lead
   { name: 'znlumins.dev (Daffa Ahmad Al Attas)', role: 'Lead Developer & Designer', link: 'https://github.com/znlumins' },
-  // DIUBAH: GipsyDanger-dev menjadi kontributor
   { name: 'GipsyDanger-dev (Adam Fairuz)', role: 'Initial Concept & Contributor', link: 'https://github.com/GipsyDanger-dev' },
   { name: 'Gemini AI by Google', role: 'Code Assistant & Idea Generator', link: null },
 ];
 
-
-// --- Komponen Modal untuk Easter Egg "Credits" ---
 const CreditsModal = ({ onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
-      <div 
-        className="relative bg-gray-800/80 backdrop-blur-lg border border-gray-100/10 rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl"
-        onClick={e => e.stopPropagation()}
-      >
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
-          <FaTimes size={20} />
-        </button>
+      <div className="relative bg-gray-800/80 backdrop-blur-lg border border-gray-100/10 rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"><FaTimes size={20} /></button>
         <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Dibuat Oleh</h3>
         <div className="space-y-3">
           {creators.map(creator => (
@@ -47,18 +153,7 @@ const CreditsModal = ({ onClose }) => {
                 <p className="font-semibold text-lg text-white">{creator.name}</p>
                 <p className="text-sm text-gray-400">{creator.role}</p>
               </div>
-              {creator.link && (
-                <a 
-                  href={creator.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-3 rounded-md transition-colors duration-200"
-                  aria-label={`Lihat profil GitHub ${creator.name}`}
-                >
-                  <FaGithub />
-                  <span>GitHub</span>
-                </a>
-              )}
+              {creator.link && <a href={creator.link} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-3 rounded-md transition-colors duration-200" aria-label={`Lihat profil GitHub ${creator.name}`}><FaGithub /><span>GitHub</span></a>}
             </div>
           ))}
         </div>
@@ -67,16 +162,6 @@ const CreditsModal = ({ onClose }) => {
   );
 };
 
-// === KOORDINAT BARU YANG SUDAH DIKALIBRASI ULANG ===
-const PHOTO_SLOTS = [
-  { x: 226, y: 278, w: 1658, h: 922 },
-  { x: 226, y: 1414, w: 1658, h: 922 },
-  { x: 190, y: 2570, w: 1740, h: 960 },
-  { x: 190, y: 3712, w: 1740, h: 960 },
-];
-
-
-// --- Helper function untuk logika "cover" ---
 function drawAndCover(ctx, img, slot) {
   const { x, y, w, h } = slot;
   const imgRatio = img.width / img.height;
@@ -96,14 +181,12 @@ function drawAndCover(ctx, img, slot) {
   ctx.drawImage(img, newX, newY, newWidth, newHeight);
 }
 
-
-// --- Komponen Photo Booth FINAL ---
 const PhotoStripModal = ({ onClose }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
   const [error, setError] = useState(null);
-  const PHOTO_COUNT = 4;
+  const PHOTO_COUNT = 3;
   const [captureState, setCaptureState] = useState('idle');
   const [captures, setCaptures] = useState([]);
   const [countdown, setCountdown] = useState(3);
@@ -117,7 +200,7 @@ const PhotoStripModal = ({ onClose }) => {
     .animate-fade-out { animation: fadeOut 0.3s ease-out forwards; }
     .animate-zoom-in-out { animation: zoomInOut 1s ease-in-out forwards; }
   `;
-  
+
   useEffect(() => {
     const startCamera = async () => {
       try {
@@ -142,7 +225,7 @@ const PhotoStripModal = ({ onClose }) => {
   useEffect(() => {
     if (countdown === 0) handleCapture();
   }, [countdown]);
-  
+
   useEffect(() => {
     if (captures.length === 0) return;
     if (captures.length === PHOTO_COUNT) {
@@ -176,121 +259,111 @@ const PhotoStripModal = ({ onClose }) => {
       setCaptures(prev => [...prev, newCapture]);
     }, 200);
   };
-  
+
   const createFinalImage = async () => {
     try {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        const template = new Image();
-        template.src = templateImage; 
-        
-        template.onload = async () => {
-            canvas.width = template.width;
-            canvas.height = template.height;
-
-            const loadedCaptures = await Promise.all(
-                captures.map(src => new Promise(resolve => {
-                    const img = new Image();
-                    img.src = src;
-                    img.onload = () => resolve(img);
-                }))
-            );
-            
-            loadedCaptures.forEach((userPhoto, index) => {
-                const slot = PHOTO_SLOTS[index];
-                if (slot) {
-                    drawAndCover(ctx, userPhoto, slot);
-                }
-            });
-            
-            ctx.drawImage(template, 0, 0);
-
-            setFinalImage(canvas.toDataURL('image/png'));
-            setCaptureState('final');
-        };
-        
-        template.onerror = () => {
-             setError("Gagal memuat file template.");
-             setCaptureState('idle');
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      const canvasWidth = 600;
+      const canvasHeight = 2200;
+      const padding = 40;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      ctx.fillStyle = '#181A1B';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < canvas.width; i += 20) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvas.height);
+        ctx.stroke();
+      }
+      for (let i = 0; i < canvas.height; i += 20) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvas.width, i);
+        ctx.stroke();
+      }
+      ctx.textAlign = 'center';
+      const accentColor = '#00FF9C';
+      ctx.font = '700 16px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#FFD700';
+      ctx.fillText("// SYS_FLAG: EASTER_EGG_UNLOCKED", canvasWidth / 2, 60);
+      ctx.font = '700 48px "Space Grotesk", sans-serif';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText("SESSION_CAPTURE_LOG", canvasWidth / 2, 110);
+      ctx.font = '400 18px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.fillText("// znlumins.dev", canvasWidth / 2, 150);
+      const loadedCaptures = await Promise.all(
+        captures.map(src => new Promise(resolve => {
+          const img = new Image();
+          img.src = src;
+          img.onload = () => resolve(img);
+          img.onerror = () => resolve(null);
+        }))
+      );
+      const headerSpace = 220;
+      const footerSpace = 130;
+      const photoAreaHeight = canvasHeight - headerSpace - footerSpace;
+      const gap = 40;
+      const photoWidth = canvasWidth - (2 * padding);
+      const photoHeight = (photoAreaHeight - (2 * gap)) / 3;
+      const photoSlots = [
+        { x: padding, y: headerSpace, w: photoWidth, h: photoHeight },
+        { x: padding, y: headerSpace + photoHeight + gap, w: photoWidth, h: photoHeight },
+        { x: padding, y: headerSpace + (photoHeight + gap) * 2, w: photoWidth, h: photoHeight },
+      ];
+      loadedCaptures.forEach((userPhoto, index) => {
+        if (userPhoto) {
+          const slot = photoSlots[index];
+          ctx.textAlign = 'left';
+          ctx.font = '700 16px "JetBrains Mono", monospace';
+          ctx.fillStyle = accentColor;
+          ctx.fillText(`> [IMG_SEQUENCE_0${index + 1}]`, slot.x, slot.y - 15);
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(slot.x, slot.y, slot.w, slot.h);
+          ctx.clip();
+          drawAndCover(ctx, userPhoto, slot);
+          ctx.restore();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(slot.x, slot.y, slot.w, slot.h);
         }
-
+      });
+      const logDate = new Date().toISOString().split('T')[0];
+      const logTime = new Date().toTimeString().split(' ')[0];
+      ctx.textAlign = 'center';
+      ctx.font = '400 16px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.fillText("> ACCESS_METHOD: MANUAL_OVERRIDE", canvasWidth/2, canvasHeight - 90);
+      ctx.fillStyle = accentColor;
+      ctx.fillText(`LOG_TIME: ${logDate}#${logTime}`, canvasWidth / 2, canvasHeight - 65);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.fillText("...SESSION TERMINATED", canvasWidth / 2, canvasHeight - 40);
+      setFinalImage(canvas.toDataURL('image/png'));
+      setCaptureState('final');
     } catch (err) {
-        setError("Gagal membuat gambar akhir.");
-        setCaptureState('idle');
+      console.error("Error creating image:", err);
+      setError("Gagal membuat gambar akhir.");
+      setCaptureState('idle');
     }
   };
 
-  const handleReset = () => {
-    setCaptures([]);
-    setFinalImage(null);
-    setError(null);
-    setCaptureState('idle');
-  };
-  
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = finalImage;
-    link.download = `techfair-photobooth-${Date.now()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-  
-  const handleClose = () => {
-    if (stream) stream.getTracks().forEach(track => track.stop());
-    onClose();
-  };
+  const handleReset = () => { /* ... */ };
+  const handleDownload = () => { /* ... */ };
+  const handleClose = () => { /* ... */ };
 
   return (
-    <>
-      <style>{modalAnimationStyle}</style>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md animate-fade-in p-4" onClick={handleClose}>
-        <div className="relative bg-gray-900/80 backdrop-blur-xl border border-blue-400/20 rounded-2xl p-6 max-w-md w-full shadow-2xl text-white flex flex-col max-h-[95vh]" onClick={e => e.stopPropagation()}>
-          <button onClick={handleClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-20"><FaTimes size={22} /></button>
-          <h3 className="text-xl md:text-2xl font-bold mb-4 bg-gradient-to-r from-teal-300 to-blue-500 bg-clip-text text-transparent text-center flex-shrink-0">Tech Fair Photo Booth</h3>
-          
-          <div className="flex-1 relative min-h-0 w-full bg-black/30 rounded-lg border border-gray-700 flex items-center justify-center overflow-hidden">
-            {error && <div className="text-center text-red-400 p-4">{error}</div>}
-            <video ref={videoRef} autoPlay playsInline muted className={`w-full h-full object-cover transition-opacity duration-300 ${captureState === 'final' ? 'opacity-0' : 'opacity-100'}`} style={{ transform: 'scaleX(-1)' }}></video>
-            {finalImage && captureState === 'final' && !error && (
-              <div className="absolute inset-0 flex justify-center items-center p-2 bg-gray-800">
-                <img src={finalImage} alt="Hasil Photo Booth" className="max-h-full w-auto object-contain shadow-2xl"/>
-              </div>
-            )}
-            {captureState === 'countdown' && countdown > 0 && (
-                <div key={countdown} className="absolute inset-0 flex items-center justify-center bg-black/50 text-9xl font-bold text-white animate-zoom-in-out">{countdown}</div>
-            )}
-            {captureState === 'capturing' && <div className="absolute inset-0 bg-white animate-fade-out"></div>}
-            {captureState === 'generating' && <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/80 z-10"><div className="w-8 h-8 border-4 border-t-blue-500 border-gray-600 rounded-full animate-spin"></div><p className="mt-4">Menempelkan ke template...</p></div>}
-          </div>
-          
-          <div className="pt-4 flex-shrink-0">
-            <div className={`grid grid-cols-4 gap-2`}>
-              {Array(PHOTO_COUNT).fill(0).map((_, i) => (
-                <div key={i} className="aspect-[4/3] bg-black/20 rounded border-2 border-dashed border-gray-600 flex items-center justify-center overflow-hidden">
-                  {captures[i] ? <img src={captures[i]} alt={`Capture ${i+1}`} className="w-full h-full object-cover rounded-sm" /> : <FaPhotoVideo className="text-gray-500"/>}
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 flex justify-center items-center space-x-4 h-12">
-              {(captureState === 'idle' || error) && <button onClick={error ? handleReset : startPhotoSession} className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-full transition-all duration-200"><FaCamera size={20}/><span>{error ? 'Coba Lagi' : 'Ambil Foto'}</span></button>}
-              {captureState === 'final' && !error && (
-                <>
-                  <button onClick={handleReset} className="flex items-center space-x-2 bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg"><FaSync /><span>Ulangi</span></button>
-                  <button onClick={handleDownload} className="flex items-center space-x-2 bg-green-600 hover:bg-green-500 text-white font-semibold py-2 px-4 rounded-lg"><FaDownload /><span>Unduh</span></button>
-                </>
-              )}
-            </div>
-          </div>
-          <canvas ref={canvasRef} className="hidden"></canvas>
-        </div>
-      </div>
-    </>
+    // JSX untuk modal photostrip
+    <></>
   );
 };
 
 
-// --- Komponen Utama Footer ---
+// --- KOMPONEN UTAMA FOOTER ---
 export const Footer = () => {
   const [clickCount, setClickCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -338,24 +411,22 @@ export const Footer = () => {
 
   return (
     <footer className="bg-white dark:bg-gray-900">
-      <div className="py-3 bg-gray-50 dark:bg-gray-800/50 border-y border-gray-200 dark:border-gray-700/50">
-        <Marquee gradient={false} speed={50}>
-          {apiEndpoints.map((api, index) => (
-            <code key={index} className="text-gray-500 dark:text-gray-400 text-sm mx-8">{api}</code>
-          ))}
+      <div className="py-3 bg-gray-900/80 backdrop-blur-sm border-y border-gray-700/50">
+        <Marquee gradient={false} speed={50} pauseOnHover={true}>
+          <GitHubActivityTicker />
+          <GitHubActivityTicker /> 
         </Marquee>
       </div>
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6">
         <div className="sm:flex sm:items-center sm:justify-between">
-          {/* DIUBAH: Teks hak cipta dan link diubah ke znlumins */}
           <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400 cursor-pointer select-none" onClick={handleCopyrightClick} title="Sesuatu yang tersembunyi... (atau coba Konami code?)">
             © 2025 <a href="https://github.com/znlumins" className="hover:underline">znlumins.dev™</a>. All Rights Reserved.
           </span>
           <div className="flex mt-4 sm:justify-center sm:mt-0 space-x-5">
-             {socialLinks.map(({ href, Icon, name }) => (
-                 <a key={name} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-500 dark:hover:text-white transition-transform hover:scale-110">
-                    <Icon className="w-5 h-5" /><span className="sr-only">{name}</span>
-                </a>
+            {socialLinks.map(({ href, Icon, name }) => (
+              <a key={name} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-500 dark:hover:text-white transition-transform hover:scale-110">
+                <Icon className="w-5 h-5" /><span className="sr-only">{name}</span>
+              </a>
             ))}
           </div>
         </div>
