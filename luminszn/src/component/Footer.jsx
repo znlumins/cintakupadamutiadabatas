@@ -4,74 +4,33 @@ import {
   FaGithub, FaInstagram, FaWhatsapp, FaTwitter, FaDiscord, FaTimes, FaCamera, 
   FaDownload, FaSync, FaPhotoVideo
 } from "react-icons/fa";
+import { 
+  SiJavascript, SiReact, SiTailwindcss, SiNodedotjs, 
+  SiVercel, SiGit, SiFigma, SiNextdotjs 
+} from "react-icons/si";
 
-// --- KOMPONEN CRYPTO PRICE TICKER ---
-const CryptoPriceTicker = () => {
-  const [coins, setCoins] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  const COIN_IDS = ['bitcoin', 'ethereum', 'solana', 'dogecoin', 'cardano', 'ripple', 'tether'];
 
-  useEffect(() => {
-    const fetchCryptoData = async () => {
-      try {
-        const response = await fetch(
-          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${COIN_IDS.join(',')}`
-        );
-        if (!response.ok) {
-          throw new Error(`Gagal mengambil data crypto: ${response.statusText}`);
-        }
-        const data = await response.json();
-        setCoins(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-        console.error("Error fetching crypto data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCryptoData();
-    const intervalId = setInterval(fetchCryptoData, 60000); 
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const renderCoin = (coin) => {
-    const priceChange = coin.price_change_percentage_24h;
-    const isPositive = priceChange >= 0;
-
-    return (
-      <div key={coin.id} className="flex items-center mx-6 text-sm font-mono whitespace-nowrap">
-        <img src={coin.image} alt={coin.name} className="w-5 h-5 mr-3" />
-        <span className="font-bold text-gray-200">{coin.symbol.toUpperCase()}</span>
-        <span className="ml-2 text-gray-300">
-          ${coin.current_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </span>
-        <span className={`ml-2 font-semibold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
-          {isPositive ? '+' : ''}{priceChange.toFixed(2)}%
-        </span>
-      </div>
-    );
-  };
-
-  if (loading) {
-    return <div className="text-gray-400 text-sm mx-8">Memuat harga crypto...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-400 text-sm mx-8">{error}</div>;
-  }
-  
-  if (coins.length === 0) {
-      return <div className="text-gray-500 text-sm mx-8">Tidak ada data crypto yang tersedia.</div>
-  }
+// --- KOMPONEN PENGGANTI: TECH STACK TICKER ---
+const TechStackTicker = () => {
+  const skills = [
+    { name: 'JavaScript (ES6+)', Icon: SiJavascript, color: '#F7DF1E' },
+    { name: 'React', Icon: SiReact, color: '#61DAFB' },
+    { name: 'Next.js', Icon: SiNextdotjs, color: '#FFFFFF' },
+    { name: 'Tailwind CSS', Icon: SiTailwindcss, color: '#38B2AC' },
+    { name: 'Node.js', Icon: SiNodedotjs, color: '#339933' },
+    { name: 'Git', Icon: SiGit, color: '#F05032' },
+    { name: 'Vercel', Icon: SiVercel, color: '#FFFFFF' },
+    { name: 'Figma', Icon: SiFigma, color: '#F24E1E' },
+  ];
 
   return (
-    <div className="flex">
-      {coins.map(renderCoin)}
+    <div className="flex items-center">
+      {skills.map(skill => (
+        <div key={skill.name} className="flex items-center mx-6 whitespace-nowrap">
+          <skill.Icon className="w-6 h-6 mr-3" style={{ color: skill.color }} />
+          <span className="text-md font-semibold text-gray-200">{skill.name}</span>
+        </div>
+      ))}
     </div>
   );
 };
@@ -114,6 +73,7 @@ const CreditsModal = ({ onClose }) => {
   );
 };
 
+// Helper function untuk menggambar gambar agar pas di canvas (cover style)
 function drawAndCover(ctx, img, slot) {
   const { x, y, w, h } = slot;
   const imgRatio = img.width / img.height;
@@ -133,7 +93,7 @@ function drawAndCover(ctx, img, slot) {
   ctx.drawImage(img, newX, newY, newWidth, newHeight);
 }
 
-// --- KOMPONEN PHOTO STRIP MODAL (DENGAN PERBAIKAN TIMER) ---
+// --- KOMPONEN PHOTO STRIP MODAL (DENGAN PERBAIKAN ANIMASI) ---
 const PhotoStripModal = ({ onClose }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -153,7 +113,6 @@ const PhotoStripModal = ({ onClose }) => {
     .animate-zoom-in-out { animation: zoomInOut 1s ease-in-out forwards; }
   `;
 
-  // Efek untuk menyalakan kamera (hanya sekali)
   useEffect(() => {
     let mediaStream;
     const startCamera = async () => {
@@ -174,53 +133,29 @@ const PhotoStripModal = ({ onClose }) => {
     };
   }, []);
 
-  // >>> PERBAIKAN TIMER BAGIAN 1: Efek ini HANYA menjalankan interval <<<
   useEffect(() => {
-    let intervalId;
-    if (captureState === 'countdown') {
-      intervalId = setInterval(() => {
-        setCountdown(prev => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(intervalId);
-  }, [captureState]);
-
-  // >>> PERBAIKAN TIMER BAGIAN 2: Efek ini HANYA memicu capture saat timer habis <<<
-  useEffect(() => {
-    if (countdown <= 0 && captureState === 'countdown') {
+    if (captureState !== 'countdown') return;
+    if (countdown <= 0) {
       handleCapture();
+      return;
     }
-  }, [countdown, captureState]);
-  
-  // Efek ini mengontrol alur SETELAH foto diambil
-  useEffect(() => {
-    if (captures.length === 0 || captureState === 'final') return;
-
-    if (captures.length === PHOTO_COUNT) {
-      setCaptureState('generating');
-      setTimeout(() => createFinalImage(), 500);
-    } else if (captures.length > 0) {
-      // >>> PERBAIKAN TIMER BAGIAN 3: Reset timer ke 3 saat akan memulai countdown berikutnya <<<
-      setCountdown(3); 
-      setCaptureState('countdown');
-    }
-  }, [captures]);
+    const timerId = setTimeout(() => {
+      setCountdown(prev => prev - 1);
+    }, 1000);
+    return () => clearTimeout(timerId);
+  }, [captureState, countdown]);
 
   const startPhotoSession = () => {
     setError(null);
     setFinalImage(null);
     setCaptures([]);
-    // >>> PERBAIKAN TIMER BAGIAN 3: Reset timer ke 3 saat memulai sesi <<<
     setCountdown(3);
     setCaptureState('countdown');
   };
 
   const handleCapture = () => {
-    // Guard: Mencegah pengambilan foto ganda
-    if (!videoRef.current || captureState !== 'countdown') return;
-
-    setCaptureState('capturing'); // Tampilkan efek kilat
-
+    if (!videoRef.current) return;
+    setCaptureState('capturing');
     setTimeout(() => {
       const tempCanvas = document.createElement('canvas');
       const video = videoRef.current;
@@ -232,12 +167,20 @@ const PhotoStripModal = ({ onClose }) => {
       context.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
       const newCapture = tempCanvas.toDataURL('image/jpeg', 0.9);
       
-      setCaptures(prev => [...prev, newCapture]);
+      const updatedCaptures = [...captures, newCapture];
+      setCaptures(updatedCaptures);
+
+      if (updatedCaptures.length < PHOTO_COUNT) {
+        setCountdown(3);
+        setCaptureState('countdown');
+      } else {
+        setCaptureState('generating');
+        setTimeout(() => createFinalImage(updatedCaptures), 500);
+      }
     }, 200);
   };
   
-  const createFinalImage = async () => {
-    // ... (fungsi ini tidak berubah)
+  const createFinalImage = async (finalCaptures) => {
     try {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
@@ -251,16 +194,10 @@ const PhotoStripModal = ({ onClose }) => {
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
       ctx.lineWidth = 1;
       for (let i = 0; i < canvas.width; i += 20) {
-        ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, canvas.height);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
       }
       for (let i = 0; i < canvas.height; i += 20) {
-        ctx.beginPath();
-        ctx.moveTo(0, i);
-        ctx.lineTo(canvas.width, i);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
       }
       ctx.textAlign = 'center';
       const accentColor = '#00FF9C';
@@ -274,7 +211,7 @@ const PhotoStripModal = ({ onClose }) => {
       ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
       ctx.fillText("// znlumins.dev", canvasWidth / 2, 150);
       const loadedCaptures = await Promise.all(
-        captures.map(src => new Promise(resolve => {
+        finalCaptures.map(src => new Promise(resolve => {
           const img = new Image();
           img.src = src;
           img.onload = () => resolve(img);
@@ -377,7 +314,9 @@ const PhotoStripModal = ({ onClose }) => {
 
                   {captureState === 'countdown' && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                      <span className="text-9xl font-bold text-white animate-zoom-in-out">{countdown > 0 ? countdown : ''}</span>
+                      <span key={countdown} className="text-9xl font-bold text-white animate-zoom-in-out">
+                        {countdown > 0 ? countdown : ''}
+                      </span>
                     </div>
                   )}
                   {captureState === 'capturing' && <div className="absolute inset-0 bg-white animate-fade-out"></div>}
@@ -463,8 +402,9 @@ export const Footer = () => {
     <footer className="bg-white dark:bg-gray-900">
       <div className="py-3 bg-gray-900/80 backdrop-blur-sm border-y border-gray-700/50 overflow-hidden">
         <Marquee gradient={false} speed={50} pauseOnHover={true}>
-          <CryptoPriceTicker />
-          <CryptoPriceTicker /> 
+          {/* Menggunakan komponen TechStackTicker di sini */}
+          <TechStackTicker />
+          <TechStackTicker /> 
         </Marquee>
       </div>
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6">
