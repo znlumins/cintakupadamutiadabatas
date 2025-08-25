@@ -2,124 +2,76 @@ import React, { useState, useEffect, useRef } from "react";
 import Marquee from "react-fast-marquee";
 import { 
   FaGithub, FaInstagram, FaWhatsapp, FaTwitter, FaDiscord, FaTimes, FaCamera, 
-  FaDownload, FaSync, FaPhotoVideo, FaCodeBranch, FaStar, FaPlus 
+  FaDownload, FaSync, FaPhotoVideo
 } from "react-icons/fa";
 
-// --- KOMPONEN GITHUB ACTIVITY TICKER (DIPERBAIKI UNTUK VITE) ---
-const GitHubActivityTicker = () => {
-  const GITHUB_USERNAME = "znlumins";
-
-  const [activities, setActivities] = useState([]);
+// --- KOMPONEN CRYPTO PRICE TICKER ---
+const CryptoPriceTicker = () => {
+  const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const truncate = (str, n) => {
-    return (str.length > n) ? str.substr(0, n - 1) + '...' : str;
-  };
+  
+  const COIN_IDS = ['bitcoin', 'ethereum', 'solana', 'dogecoin', 'cardano', 'ripple', 'tether'];
 
   useEffect(() => {
-    const fetchActivities = async () => {
-      // Membaca token dari import.meta.env (untuk Vite)
-      const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
-
-      if (!GITHUB_TOKEN) {
-        setError("GitHub token tidak ditemukan. Pastikan file .env memiliki VITE_GITHUB_TOKEN dan server sudah di-restart.");
-        setLoading(false);
-        return;
-      }
-
+    const fetchCryptoData = async () => {
       try {
         const response = await fetch(
-          `https://api.github.com/users/${GITHUB_USERNAME}/events/public`, {
-            headers: {
-              'Authorization': `token ${GITHUB_TOKEN}`
-            }
-          }
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${COIN_IDS.join(',')}`
         );
-        if (response.status === 403) {
-            throw new Error('Limit permintaan API GitHub terlampaui. Coba lagi dalam beberapa menit.');
-        }
         if (!response.ok) {
-          throw new Error(`Gagal mengambil data: ${response.statusText}`);
+          throw new Error(`Gagal mengambil data crypto: ${response.statusText}`);
         }
         const data = await response.json();
-        
-        const filteredData = data.filter(event => 
-          event.type === 'PushEvent' || 
-          (event.type === 'CreateEvent' && event.payload.ref_type === 'repository') ||
-          event.type === 'WatchEvent'
-        ).slice(0, 10);
-
-        setActivities(filteredData);
+        setCoins(data);
         setError(null);
       } catch (err) {
         setError(err.message);
-        console.error("Error fetching GitHub data:", err);
+        console.error("Error fetching crypto data:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchActivities();
-    const intervalId = setInterval(fetchActivities, 300000); // Refresh setiap 5 menit
+    fetchCryptoData();
+    const intervalId = setInterval(fetchCryptoData, 60000); 
 
     return () => clearInterval(intervalId);
   }, []);
 
-  const renderEvent = (event) => {
-    const repoName = event.repo.name.split('/')[1];
-    switch (event.type) {
-      case 'PushEvent':
-        const commitMsg = event.payload.commits[0]?.message || 'No commit message';
-        return (
-          <>
-            <FaCodeBranch className="text-cyan-400 flex-shrink-0" />
-            <span className="ml-2 font-bold text-gray-200">COMMIT</span>
-            <span className="ml-2 text-gray-400">to</span>
-            <span className="ml-2 font-semibold text-green-400">{repoName}</span>
-            <span className="ml-3 text-gray-500 italic">"{truncate(commitMsg, 40)}"</span>
-          </>
-        );
-      case 'CreateEvent':
-        return (
-          <>
-            <FaPlus className="text-green-400 flex-shrink-0" />
-            <span className="ml-2 font-bold text-gray-200">CREATED REPO</span>
-            <span className="ml-2 font-semibold text-green-400">{repoName}</span>
-          </>
-        );
-      case 'WatchEvent':
-        return (
-          <>
-            <FaStar className="text-yellow-400 flex-shrink-0" />
-            <span className="ml-2 font-bold text-gray-200">STARRED</span>
-            <span className="ml-2 font-semibold text-green-400">{repoName}</span>
-          </>
-        );
-      default:
-        return null;
-    }
+  const renderCoin = (coin) => {
+    const priceChange = coin.price_change_percentage_24h;
+    const isPositive = priceChange >= 0;
+
+    return (
+      <div key={coin.id} className="flex items-center mx-6 text-sm font-mono whitespace-nowrap">
+        <img src={coin.image} alt={coin.name} className="w-5 h-5 mr-3" />
+        <span className="font-bold text-gray-200">{coin.symbol.toUpperCase()}</span>
+        <span className="ml-2 text-gray-300">
+          ${coin.current_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </span>
+        <span className={`ml-2 font-semibold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+          {isPositive ? '+' : ''}{priceChange.toFixed(2)}%
+        </span>
+      </div>
+    );
   };
 
   if (loading) {
-    return <div className="text-gray-400 text-sm mx-8">Memuat aktivitas GitHub @{GITHUB_USERNAME}...</div>;
+    return <div className="text-gray-400 text-sm mx-8">Memuat harga crypto...</div>;
   }
 
   if (error) {
     return <div className="text-red-400 text-sm mx-8">{error}</div>;
   }
   
-  if (activities.length === 0) {
-      return <div className="text-gray-500 text-sm mx-8">Tidak ada aktivitas publik terbaru dari @{GITHUB_USERNAME}.</div>
+  if (coins.length === 0) {
+      return <div className="text-gray-500 text-sm mx-8">Tidak ada data crypto yang tersedia.</div>
   }
 
   return (
     <div className="flex">
-      {activities.map((activity) => (
-        <div key={activity.id} className="flex items-center mx-6 text-sm font-mono whitespace-nowrap">
-          {renderEvent(activity)}
-        </div>
-      ))}
+      {coins.map(renderCoin)}
     </div>
   );
 };
@@ -181,10 +133,10 @@ function drawAndCover(ctx, img, slot) {
   ctx.drawImage(img, newX, newY, newWidth, newHeight);
 }
 
+// --- KOMPONEN PHOTO STRIP MODAL (DENGAN PERBAIKAN TIMER) ---
 const PhotoStripModal = ({ onClose }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [stream, setStream] = useState(null);
   const [error, setError] = useState(null);
   const PHOTO_COUNT = 3;
   const [captureState, setCaptureState] = useState('idle');
@@ -201,37 +153,55 @@ const PhotoStripModal = ({ onClose }) => {
     .animate-zoom-in-out { animation: zoomInOut 1s ease-in-out forwards; }
   `;
 
+  // Efek untuk menyalakan kamera (hanya sekali)
   useEffect(() => {
+    let mediaStream;
     const startCamera = async () => {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 } } });
-        setStream(mediaStream);
-        if (videoRef.current) videoRef.current.srcObject = mediaStream;
-      } catch (err) { setError("Kamera tidak dapat diakses."); }
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 } } });
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+      } catch (err) {
+        setError("Kamera tidak dapat diakses. Izinkan akses kamera pada browser Anda.");
+      }
     };
     startCamera();
-    return () => { if (stream) stream.getTracks().forEach(track => track.stop()); };
+    return () => {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+      }
+    };
   }, []);
 
+  // >>> PERBAIKAN TIMER BAGIAN 1: Efek ini HANYA menjalankan interval <<<
   useEffect(() => {
     let intervalId;
     if (captureState === 'countdown') {
-      setCountdown(3);
-      intervalId = setInterval(() => setCountdown(prev => prev - 1), 1000);
+      intervalId = setInterval(() => {
+        setCountdown(prev => prev - 1);
+      }, 1000);
     }
     return () => clearInterval(intervalId);
   }, [captureState]);
 
+  // >>> PERBAIKAN TIMER BAGIAN 2: Efek ini HANYA memicu capture saat timer habis <<<
   useEffect(() => {
-    if (countdown === 0) handleCapture();
-  }, [countdown]);
+    if (countdown <= 0 && captureState === 'countdown') {
+      handleCapture();
+    }
+  }, [countdown, captureState]);
+  
+  // Efek ini mengontrol alur SETELAH foto diambil
+  useEffect(() => {
+    if (captures.length === 0 || captureState === 'final') return;
 
-  useEffect(() => {
-    if (captures.length === 0) return;
     if (captures.length === PHOTO_COUNT) {
       setCaptureState('generating');
       setTimeout(() => createFinalImage(), 500);
-    } else {
+    } else if (captures.length > 0) {
+      // >>> PERBAIKAN TIMER BAGIAN 3: Reset timer ke 3 saat akan memulai countdown berikutnya <<<
+      setCountdown(3); 
       setCaptureState('countdown');
     }
   }, [captures]);
@@ -240,12 +210,17 @@ const PhotoStripModal = ({ onClose }) => {
     setError(null);
     setFinalImage(null);
     setCaptures([]);
+    // >>> PERBAIKAN TIMER BAGIAN 3: Reset timer ke 3 saat memulai sesi <<<
+    setCountdown(3);
     setCaptureState('countdown');
   };
 
   const handleCapture = () => {
-    if (!videoRef.current) return;
-    setCaptureState('capturing');
+    // Guard: Mencegah pengambilan foto ganda
+    if (!videoRef.current || captureState !== 'countdown') return;
+
+    setCaptureState('capturing'); // Tampilkan efek kilat
+
     setTimeout(() => {
       const tempCanvas = document.createElement('canvas');
       const video = videoRef.current;
@@ -256,11 +231,13 @@ const PhotoStripModal = ({ onClose }) => {
       context.scale(-1, 1);
       context.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
       const newCapture = tempCanvas.toDataURL('image/jpeg', 0.9);
+      
       setCaptures(prev => [...prev, newCapture]);
     }, 200);
   };
-
+  
   const createFinalImage = async () => {
+    // ... (fungsi ini tidak berubah)
     try {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
@@ -352,13 +329,86 @@ const PhotoStripModal = ({ onClose }) => {
     }
   };
 
-  const handleReset = () => { /* ... */ };
-  const handleDownload = () => { /* ... */ };
-  const handleClose = () => { /* ... */ };
+  const handleReset = () => {
+    setCaptures([]);
+    setFinalImage(null);
+    setCaptureState('idle');
+  };
+  
+  const handleDownload = () => {
+    if (!finalImage) return;
+    const link = document.createElement('a');
+    link.href = finalImage;
+    link.download = `photostrip-znlumins-dev-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleClose = () => onClose();
 
   return (
-    // JSX untuk modal photostrip
-    <></>
+     <>
+      <style>{modalAnimationStyle}</style>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in" onClick={handleClose}>
+        <div className="relative bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-2xl w-full mx-4 shadow-2xl flex flex-col items-center" onClick={e => e.stopPropagation()}>
+          <button onClick={handleClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-20"><FaTimes size={22} /></button>
+          
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+          {captureState === 'final' && finalImage ? (
+            <div className="flex flex-col items-center w-full animate-fade-in">
+              <h3 className="text-2xl font-bold mb-4 text-white">Your Photo Strip!</h3>
+              <img src={finalImage} alt="Final photo strip" className="rounded-lg border-2 border-gray-600 max-h-[60vh] object-contain mb-6"/>
+              <div className="flex space-x-4">
+                <button onClick={handleDownload} className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 rounded-lg transition-transform hover:scale-105">
+                  <FaDownload /><span>Download</span>
+                </button>
+                <button onClick={handleReset} className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-lg transition-transform hover:scale-105">
+                  <FaSync /><span>Coba Lagi</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="w-full aspect-video relative flex items-center justify-center bg-black rounded-lg overflow-hidden">
+                  {error && <div className="text-center text-red-400 p-4">{error}</div>}
+                  {!error && <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover transform -scale-x-100" />}
+
+                  {captureState === 'countdown' && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                      <span className="text-9xl font-bold text-white animate-zoom-in-out">{countdown > 0 ? countdown : ''}</span>
+                    </div>
+                  )}
+                  {captureState === 'capturing' && <div className="absolute inset-0 bg-white animate-fade-out"></div>}
+                  {captureState === 'generating' && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70">
+                          <FaPhotoVideo className="text-white text-5xl animate-pulse" />
+                          <p className="text-white mt-4 text-lg">Membuat gambar...</p>
+                      </div>
+                  )}
+              </div>
+
+              {captureState === 'idle' && !error && (
+                <button onClick={startPhotoSession} className="mt-6 flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-transform hover:scale-105">
+                  <FaCamera /><span>Mulai Sesi Foto</span>
+                </button>
+              )}
+
+              {['countdown', 'capturing', 'generating'].includes(captureState) && (
+                  <div className="flex space-x-3 mt-4 h-14">
+                      {[...Array(PHOTO_COUNT)].map((_, i) => (
+                          <div key={i} className={`w-10 rounded border-2 transition-all ${i < captures.length ? 'bg-green-500/50 border-green-400' : 'bg-gray-700/50 border-gray-600'}`}>
+                              {captures[i] && <img src={captures[i]} alt={`Capture ${i+1}`} className="w-full h-full object-cover rounded-sm transform -scale-x-100" />}
+                          </div>
+                      ))}
+                  </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </>
   );
 };
 
@@ -411,10 +461,10 @@ export const Footer = () => {
 
   return (
     <footer className="bg-white dark:bg-gray-900">
-      <div className="py-3 bg-gray-900/80 backdrop-blur-sm border-y border-gray-700/50">
+      <div className="py-3 bg-gray-900/80 backdrop-blur-sm border-y border-gray-700/50 overflow-hidden">
         <Marquee gradient={false} speed={50} pauseOnHover={true}>
-          <GitHubActivityTicker />
-          <GitHubActivityTicker /> 
+          <CryptoPriceTicker />
+          <CryptoPriceTicker /> 
         </Marquee>
       </div>
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6">
