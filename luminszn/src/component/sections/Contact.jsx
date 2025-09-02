@@ -19,13 +19,13 @@ export const Contact = () => {
 
     console.log("Form submitted:", data);
 
-    // Simulate data submission
+    // Simulasi pengiriman data
     setTimeout(() => {
       setNotif("Message sent! (demo) — check console for payload");
       form.reset();
       setLoading(false);
 
-      // Hide notification after 3 seconds
+      // Sembunyikan notifikasi setelah 3 detik
       setTimeout(() => setNotif(""), 3000);
     }, 1200);
   };
@@ -33,18 +33,19 @@ export const Contact = () => {
   return (
     <section
       id="contact"
-      className="w-full min-h-screen flex flex-col justify-center items-center bg-black text-white p-4 sm:p-8 md:p-16 overflow-x-hidden" // Ditambahkan overflow-x-hidden
+      // === PERUBAHAN DI SINI: Padding disesuaikan untuk mobile ===
+      className="w-full min-h-screen flex flex-col justify-center items-center bg-black text-white px-4 py-16 sm:p-8 md:p-16 overflow-x-hidden"
     >
-      <div className="w-full max-w-5xl mx-auto"> {/* Max-width dilebarkan sedikit */}
+      <div className="w-full max-w-5xl mx-auto">
         <RevealOnScroll>
           {/* Bagian Teks */}
           <div className="text-center">
-            {/* DIUBAH: Menggunakan font responsif dan whitespace-nowrap */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-wide whitespace-nowrap">
+            {/* === PERUBAHAN DI SINI: Mengganti 'whitespace-nowrap' menjadi 'md:whitespace-nowrap' === */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-wide md:whitespace-nowrap">
               Let’s Create Something{" "}
               <span className="text-cyan-400">Remarkable.</span>
             </h2>
-            <p className="text-gray-400 text-sm mt-4 max-w-xl mx-auto">
+            <p className="text-gray-400 text-base mt-4 max-w-xl mx-auto">
               I help bring ideas to life with modern and efficient digital
               solutions. Have a project in mind? I'd love to hear about it.
             </p>
@@ -53,11 +54,12 @@ export const Contact = () => {
           {/* Bagian Form */}
           <div className="mt-12 w-full max-w-xl mx-auto relative">
             {notif && (
-              <div className="absolute -top-12 left-0 right-0 text-center text-sm text-white bg-green-500/90 py-2 px-4 rounded-lg animate-fade-in">
+              <div className="absolute -top-14 left-0 right-0 text-center text-sm text-white bg-green-500/90 py-2 px-4 rounded-lg animate-fade-in">
                 {notif}
               </div>
             )}
-            <div className="bg-black p-8 rounded-2xl border border-gray-800 shadow-2xl shadow-cyan-500/10">
+            {/* === PERUBAHAN DI SINI: Padding form disesuaikan === */}
+            <div className="bg-black p-6 sm:p-8 rounded-2xl border border-gray-800 shadow-2xl shadow-cyan-500/10">
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="relative">
