@@ -1,40 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { RevealOnScroll } from "../RevealOnScroll";
+import React from 'react';
+import { RevealOnScroll } from "../RevealOnScroll"; // Pastikan path import ini sesuai dengan struktur folder Anda
 
-// fallback image bila imageUrl kosong/gagal dimuat
+// Gambar fallback jika imageUrl kosong atau gagal dimuat
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2070&auto=format&fit=crop";
 
-// === DATA PROYEK (DUMMY) ===
+// === DATA PROYEK (Diperbarui & Lebih Lengkap Sesuai PDF) ===
 const projectsData = [
   {
-    title: "AI-Powered Inventory System",
-    summary: "Sistem manajemen gudang berbasis AI untuk optimasi inventaris dan perkiraan permintaan.",
-    description: "Developed a warehouse management system using AI for demand forecasting and route optimization, reducing operational costs.",
-    tags: ["React", "Python", "FastAPI", "MongoDB"],
-    imageUrl: "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?q=80&w=1974&auto=format&fit=crop",
-    projectUrl: "#",
+    title: "Sayembara Logo Angkatan",
+    summary: "Desain logo filosofis yang menggabungkan simbol naga (kekuatan & kebijaksanaan) dan roda gigi untuk mewakili inovasi dalam pendidikan vokasi.",
+    tags: ["Logo Design", "Branding", "Philosophy"],
+    // Ganti dengan URL gambar yang sebenarnya
+    imageUrl: "https://images.unsplash.com/photo-1596633610492-3f4153678127?q=80&w=1974&auto=format&fit=crop",
+    projectUrl: "http://bit.ly/4jtkwGb",
   },
   {
-    title: "Cinematic Short — Echoes",
-    summary: "Editor utama untuk film pendek, menangani editing, grading, dan motion graphics.",
-    description: "Lead editor and script consultant. Responsible for editing, color grading, motion graphics, and refining the narrative flow.",
-    tags: ["Premiere Pro", "After Effects", "Blender"],
-    imageUrl: "https://images.unsplash.com/photo-1505682634904-d7c5dc72f82d?q=80&w=2070&auto=format&fit=crop",
-    projectUrl: "#",
+    title: "3D Modeling: Realism",
+    summary: "Koleksi karya pemodelan 3D yang berfokus pada visualisasi objek realistis, seperti POCARI PET dan LUMINSCENT #1.",
+    tags: ["3D Modeling", "Blender", "Realism", "Rendering"],
+    // Ganti dengan URL gambar yang sebenarnya
+    imageUrl: "https://images.unsplash.com/photo-1629078634128-b64931a1664e?q=80&w=2070&auto=format&fit=crop",
+    projectUrl: "http://bit.ly/42qPglg",
   },
   {
-    title: "E-Commerce Platform (Vue + Node)",
-    summary: "Platform penjualan online dengan fitur katalog, keranjang, dan checkout.",
-    description: "Full-stack e-commerce using Vue frontend and Node/Express backend with payment integration.",
-    tags: ["Vue", "Node.js", "Express"],
-    imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop",
-    projectUrl: "#",
+    title: "3D Modeling: Low Poly",
+    summary: "Eksplorasi gaya 'Low Poly' dalam pemodelan 3D untuk menciptakan aset visual yang menarik seperti roket, dadu, dan diorama ruangan.",
+    tags: ["3D Modeling", "Low Poly", "Stylized Art"],
+     // Ganti dengan URL gambar yang sebenarnya
+    imageUrl: "https://images.unsplash.com/photo-1611993439263-546b4f7c35f2?q=80&w=1974&auto=format&fit=crop",
+    projectUrl: "http://bit.ly/3ChJnw0",
+  },
+  {
+    title: "Graphic Design Portfolio",
+    summary: "Berbagai proyek desain grafis meliputi poster produk 'Makronix', desain sampul buku islami, dan undangan pernikahan yang elegan.",
+    tags: ["Graphic Design", "Poster", "Cover Book", "Invitation"],
+    // Ganti dengan URL gambar yang sebenarnya
+    imageUrl: "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=2071&auto=format&fit=crop",
+    projectUrl: "http://bit.ly/40vBTNU",
+  },
+  {
+    title: "Company Profile Videos",
+    summary: "Kontribusi dalam pembuatan video profil perusahaan untuk ESHAL MAFAZA (2023) dan HMPS TI (2024), menangani aspek editing dan visual.",
+    tags: ["Video Editing", "Company Profile", "After Effects"],
+    // Ganti dengan URL gambar yang sebenarnya
+    imageUrl: "https://images.unsplash.com/photo-1574717024633-596a77da0b0a?q=80&w=1974&auto=format&fit=crop",
+    projectUrl: "http://bit.ly/3CjPVds",
+  },
+  {
+    title: "Bumper Video: DESAK VOKASI",
+    summary: "Membuat video bumper (pembuka) yang energik dan menarik secara visual untuk acara DESAK VOKASI 2024.",
+    tags: ["Motion Graphics", "Bumper", "Video Editing", "Premiere Pro"],
+    // Ganti dengan URL gambar yang sebenarnya
+    imageUrl: "https://images.unsplash.com/photo-1558502845-a70d959392e2?q=80&w=1974&auto=format&fit=crop",
+    projectUrl: "http://bit.ly/3PObwOm",
   },
 ];
 
 
-// ===== KARTU PROYEK =====
-// Komponen ini tidak perlu diubah
+// ===== Komponen Kartu Proyek (JSX) =====
 const ProjectCard = ({ project }) => {
   const imgSrc = project.imageUrl || FALLBACK_IMAGE;
 
@@ -79,82 +102,21 @@ const ProjectCard = ({ project }) => {
   );
 };
 
-// === KOMPONEN BARU: COUNTDOWN TIMER ===
-const CountdownTimer = () => {
-  // --- UBAH TANGGAL TARGET DI SINI ---
-  const targetDate = new Date("2025-10-20T00:00:00");
 
-  const calculateTimeLeft = () => {
-    const difference = +targetDate - +new Date();
-    let timeLeft = {};
-
-    if (difference > 0) {
-      timeLeft = {
-        Hari: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        Jam: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        Menit: Math.floor((difference / 1000 / 60) % 60),
-        Detik: Math.floor((difference / 1000) % 60),
-      };
-    }
-    return timeLeft;
-  };
-
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-    // Membersihkan timer saat komponen tidak lagi digunakan
-    return () => clearTimeout(timer);
-  });
-
-  return (
-    <div className="flex justify-center gap-4 sm:gap-8 my-8">
-      {Object.entries(timeLeft).map(([unit, value]) => (
-        <div key={unit} className="flex flex-col items-center">
-          <span className="text-3xl sm:text-5xl font-bold text-white tracking-widest">
-            {String(value).padStart(2, '0')}
-          </span>
-          <span className="text-xs sm:text-sm font-light text-cyan-300 mt-1">{unit}</span>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-
-// === KOMPONEN UTAMA (VERSI "UNDER DEVELOPMENT") ===
+// === Komponen Utama (JSX) ===
 export const Project = () => {
   return (
     <section id="projects" className="min-h-screen flex items-center justify-center py-20 bg-black">
       <RevealOnScroll>
-        <div className="relative">
-          
-          {/* --- OVERLAY YANG SELALU AKTIF --- */}
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center bg-black/80 backdrop-blur-md p-4">
-            <h3 className="text-3xl sm:text-4xl font-bold text-white tracking-wider bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-              SEGERA HADIR
-            </h3>
-            <p className="text-gray-300 mt-3 max-w-md">
-              Bagian proyek sedang dalam tahap akhir pengembangan!
-            </p>
-            {/* Memanggil komponen timer */}
-            <CountdownTimer />
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-4xl font-bold mb-16 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent text-center">
+            Featured Projects
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projectsData.map((project, index) => (
+              <ProjectCard key={index} project={project} />
+            ))}
           </div>
-
-          {/* Konten asli yang berada di belakang, dengan efek blur permanen */}
-          <div className="max-w-7xl mx-auto px-4 blur-md scale-95">
-            <h2 className="text-4xl font-bold mb-16 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent text-center">
-              Featured Projects
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projectsData.map((project, index) => (
-                <ProjectCard key={index} project={project} />
-              ))}
-            </div>
-          </div>
-
         </div>
       </RevealOnScroll>
     </section>

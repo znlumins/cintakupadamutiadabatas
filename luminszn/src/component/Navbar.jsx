@@ -18,20 +18,13 @@ export const Navbar = () => {
     <>
       <nav className="fixed top-0 w-full z-40 bg-[rgba(10, 10, 10, 0.8)] backdrop-blur-lg border-b border-white/10 shadow-lg">
         <div className="max-w-5xl mx-auto px-4">
-          {/* 
-            ↓↓↓ PERUBAHAN 1: Tambahkan kelas "relative" di sini ↓↓↓
-          */}
           <div className="relative flex justify-between items-center h-16">
             {/* Logo */}
             <a href="#home" className="font-mono text-xl font-bold text-white z-50">
               zn<span className="text-blue-500">lumins.dev</span>
             </a>
 
-            {/* 
-              ↓↓↓ PERUBAHAN 2: Ubah kelas untuk menu navigasi di sini ↓↓↓
-              Menghapus: "flex-grow", "justify-center"
-              Menambahkan: "absolute", "left-1/2", "top-1/2", "-translate-x-1/2", "-translate-y-1/2"
-            */}
+            {/* Menu Navigasi Desktop */}
             <div className="hidden md:flex items-center space-x-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <a href="#home" className="text-gray-300 hover:text-white transition-colors">
                 Home
@@ -47,11 +40,11 @@ export const Navbar = () => {
               </a>
             </div>
 
-            {/* Tombol Download CV (Kanan) */}
+            {/* Tombol Download CV (Desktop) */}
             <div className="hidden md:flex items-center z-50">
               <a
-                href="/cv-gipsy.pdf"
-                download
+                href="https://drive.google.com/uc?export=download&id=1PsFNxV33QVDLc7A--ooutWz_VJwI3WPs"
+                download="CV-Zainul.pdf" // Ini nama file yang disarankan saat diunduh
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors"
               >
                 Download CV
@@ -89,8 +82,8 @@ export const Navbar = () => {
             Contact
           </a>
           <a
-            href="/cv-gipsy.pdf"
-            download
+            href="https://drive.google.com/uc?export=download&id=1PsFNxV33QVDLc7A--ooutWz_VJwI3WPs"
+            download="CV-Zainul.pdf" // Ini nama file yang disarankan saat diunduh
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors mt-4"
           >
             Download CV
