@@ -11,7 +11,7 @@ const projectsData = [
     summary: "Desain logo filosofis yang menggabungkan simbol naga (kekuatan & kebijaksanaan) dan roda gigi untuk mewakili inovasi dalam pendidikan vokasi.",
     tags: ["Logo Design", "Branding", "Philosophy"],
     // Ganti dengan URL gambar yang sebenarnya
-    imageUrl: "https://images.unsplash.com/photo-1596633610492-3f4153678127?q=80&w=1974&auto=format&fit=crop",
+    imageUrl: "https://i.ibb.co.com/7N418L3b/DAFFA-AHMAD-AL-ATTAS-FILOSOFI-1.jpg",
     projectUrl: "http://bit.ly/4jtkwGb",
   },
   {
@@ -19,7 +19,7 @@ const projectsData = [
     summary: "Koleksi karya pemodelan 3D yang berfokus pada visualisasi objek realistis, seperti POCARI PET dan LUMINSCENT #1.",
     tags: ["3D Modeling", "Blender", "Realism", "Rendering"],
     // Ganti dengan URL gambar yang sebenarnya
-    imageUrl: "https://images.unsplash.com/photo-1629078634128-b64931a1664e?q=80&w=2070&auto=format&fit=crop",
+    imageUrl: "https://i.ibb.co.com/V0qMw39t/3.png",
     projectUrl: "http://bit.ly/42qPglg",
   },
   {
@@ -27,7 +27,7 @@ const projectsData = [
     summary: "Eksplorasi gaya 'Low Poly' dalam pemodelan 3D untuk menciptakan aset visual yang menarik seperti roket, dadu, dan diorama ruangan.",
     tags: ["3D Modeling", "Low Poly", "Stylized Art"],
      // Ganti dengan URL gambar yang sebenarnya
-    imageUrl: "https://images.unsplash.com/photo-1611993439263-546b4f7c35f2?q=80&w=1974&auto=format&fit=crop",
+    imageUrl: "https://i.ibb.co.com/KxTXWMfd/DAFFA-AHMAD-AL-ATTAS-ISOMETRIC-XIIMM2.png",
     projectUrl: "http://bit.ly/3ChJnw0",
   },
   {
@@ -35,15 +35,15 @@ const projectsData = [
     summary: "Berbagai proyek desain grafis meliputi poster produk 'Makronix', desain sampul buku islami, dan undangan pernikahan yang elegan.",
     tags: ["Graphic Design", "Poster", "Cover Book", "Invitation"],
     // Ganti dengan URL gambar yang sebenarnya
-    imageUrl: "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=2071&auto=format&fit=crop",
+    imageUrl: "https://i.ibb.co.com/5XgML6GP/3-daffmadz.png",
     projectUrl: "http://bit.ly/40vBTNU",
   },
   {
-    title: "Company Profile Videos",
-    summary: "Kontribusi dalam pembuatan video profil perusahaan untuk ESHAL MAFAZA (2023) dan HMPS TI (2024), menangani aspek editing dan visual.",
+    title: "Company Profile: ESHAL MAFAZA",
+    summary: "Kontribusi dalam pembuatan video profil untuk ESHAL MAFAZA (2023) dan HMPS TI (2024), menangani aspek editing dan visual.",
     tags: ["Video Editing", "Company Profile", "After Effects"],
     // Ganti dengan URL gambar yang sebenarnya
-    imageUrl: "https://images.unsplash.com/photo-1574717024633-596a77da0b0a?q=80&w=1974&auto=format&fit=crop",
+    imageUrl: "https://i.ibb.co.com/nqGW6YzY/Screenshot-2025-09-12-201732.png",
     projectUrl: "http://bit.ly/3CjPVds",
   },
   {

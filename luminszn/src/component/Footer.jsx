@@ -47,10 +47,9 @@ const LyricsTicker = () => {
 // --- DATA-DATA & KOMPONEN LAINNYA (TIDAK BERUBAH) ---
 const socialLinks = [
   { href: 'https://github.com/znlumins', Icon: FaGithub, name: 'GitHub' },
-  { href: 'https://www.instagram.com/adam_akmal18/?hl=id', Icon: FaInstagram, name: 'Instagram' },
-  { href: 'https://discordapp.com/users/747396909399801856', Icon: FaDiscord, name: 'Discord' },
-  { href: 'https://x.com/AdamF184953', Icon: FaTwitter, name: 'Twitter' },
-  { href: 'https://wa.me/6281229497848', Icon: FaWhatsapp, name: 'WhatsApp' },
+  { href: 'https://www.instagram.com/dfaahm/', Icon: FaInstagram, name: 'Instagram' },
+  { href: 'https://x.com/zen_luminscent', Icon: FaTwitter, name: 'Twitter' },
+  { href: 'https://wa.me/6281358939283', Icon: FaWhatsapp, name: 'WhatsApp' },
 ];
 
 const creators = [
