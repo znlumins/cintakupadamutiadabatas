@@ -40,7 +40,7 @@ const projectsData = [
   },
   {
     title: "Company Profile: ESHAL MAFAZA",
-    summary: "Kontribusi dalam pembuatan video profil untuk ESHAL MAFAZA (2023) dan HMPS TI (2024), menangani aspek editing dan visual.",
+    summary: "Kontribusi dalam pembuatan video profil untuk ESHAL MAFAZA (2023), menangani aspek editing dan visual.",
     tags: ["Video Editing", "Company Profile", "After Effects"],
     // Ganti dengan URL gambar yang sebenarnya
     imageUrl: "https://i.ibb.co.com/nqGW6YzY/Screenshot-2025-09-12-201732.png",
@@ -51,7 +51,7 @@ const projectsData = [
     summary: "Membuat video bumper (pembuka) yang energik dan menarik secara visual untuk acara DESAK VOKASI 2024.",
     tags: ["Motion Graphics", "Bumper", "Video Editing", "Premiere Pro"],
     // Ganti dengan URL gambar yang sebenarnya
-    imageUrl: "https://images.unsplash.com/photo-1558502845-a70d959392e2?q=80&w=1974&auto=format&fit=crop",
+    imageUrl: "https://i.ibb.co.com/MkkNbW4B/kastart.png",
     projectUrl: "http://bit.ly/3PObwOm",
   },
 ];

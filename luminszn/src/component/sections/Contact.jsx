@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { RevealOnScroll } from "../RevealOnScroll";
 import { FiSend } from "react-icons/fi";
+import emailjs from "@emailjs/browser";
 
 export const Contact = () => {
   const [loading, setLoading] = useState(false);
@@ -10,37 +11,38 @@ export const Contact = () => {
     e.preventDefault();
     setLoading(true);
 
-    const form = e.target;
-    const data = {
-      name: form.name.value,
-      email: form.email.value,
-      message: form.message.value,
-    };
-
-    console.log("Form submitted:", data);
-
-    // Simulasi pengiriman data
-    setTimeout(() => {
-      setNotif("Message sent! (demo) — check console for payload");
-      form.reset();
-      setLoading(false);
-
-      // Sembunyikan notifikasi setelah 3 detik
-      setTimeout(() => setNotif(""), 3000);
-    }, 1200);
+    emailjs
+      .sendForm(
+        "service_2s7xh8v",   // <- ganti dengan Service ID
+        "template_wvcdckb",  // <- ganti dengan Template ID
+        e.target,
+        "1msSItCqlMhAj9BKY"    // <- ganti dengan Public Key
+      )
+      .then(
+        () => {
+          setNotif("✅ Message sent successfully!");
+          e.target.reset();
+          setLoading(false);
+          setTimeout(() => setNotif(""), 3000);
+        },
+        (error) => {
+          console.error("EmailJS error:", error);
+          setNotif("❌ Failed to send. Try again!");
+          setLoading(false);
+          setTimeout(() => setNotif(""), 3000);
+        }
+      );
   };
 
   return (
     <section
       id="contact"
-      // === PERUBAHAN DI SINI: Padding disesuaikan untuk mobile ===
       className="w-full min-h-screen flex flex-col justify-center items-center bg-black text-white px-4 py-16 sm:p-8 md:p-16 overflow-x-hidden"
     >
       <div className="w-full max-w-5xl mx-auto">
         <RevealOnScroll>
           {/* Bagian Teks */}
           <div className="text-center">
-            {/* === PERUBAHAN DI SINI: Mengganti 'whitespace-nowrap' menjadi 'md:whitespace-nowrap' === */}
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-wide md:whitespace-nowrap">
               Let’s Create Something{" "}
               <span className="text-cyan-400">Remarkable.</span>
@@ -58,13 +60,15 @@ export const Contact = () => {
                 {notif}
               </div>
             )}
-            {/* === PERUBAHAN DI SINI: Padding form disesuaikan === */}
             <div className="bg-black p-6 sm:p-8 rounded-2xl border border-gray-800 shadow-2xl shadow-cyan-500/10">
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="relative">
                     <input
-                      type="text" id="name" name="name" required
+                      type="text"
+                      id="name"
+                      name="name"
+                      required
                       className="peer w-full bg-transparent border-b-2 border-gray-600 pt-4 pb-2 placeholder-transparent text-white outline-none focus:border-cyan-400"
                       placeholder="Name"
                     />
@@ -77,7 +81,10 @@ export const Contact = () => {
                   </div>
                   <div className="relative">
                     <input
-                      type="email" id="email" name="email" required
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
                       className="peer w-full bg-transparent border-b-2 border-gray-600 pt-4 pb-2 placeholder-transparent text-white outline-none focus:border-cyan-400"
                       placeholder="Email"
                     />
@@ -91,7 +98,9 @@ export const Contact = () => {
                 </div>
                 <div className="relative">
                   <textarea
-                    id="message" name="message" required
+                    id="message"
+                    name="message"
+                    required
                     className="peer w-full h-36 bg-transparent border-b-2 border-gray-600 pt-4 pb-2 placeholder-transparent text-white outline-none focus:border-cyan-400 resize-none"
                     placeholder="Your Message"
                   />
@@ -103,7 +112,8 @@ export const Contact = () => {
                   </label>
                 </div>
                 <button
-                  type="submit" disabled={loading}
+                  type="submit"
+                  disabled={loading}
                   className="w-full flex items-center justify-center bg-cyan-500 hover:bg-cyan-600 text-black py-3 px-6 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-1 disabled:opacity-50"
                 >
                   {loading ? "Sending..." : "Fire It Away"}
