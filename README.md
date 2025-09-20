@@ -6,8 +6,8 @@ Hey there! 👋
 This is my personal portfolio website where I share a bit about myself, my projects, and how you can reach me. It’s like my little corner on the internet ✨
 
 |Live Demo
-
-[Check it out here](https://luminszn.vercel.app/)
+You can check out the project here:  
+[https://znlumins.github.io/cintakupadamutiadabatas](https://znlumins.github.io/cintakupadamutiadabatas)
 
 |Features
 
