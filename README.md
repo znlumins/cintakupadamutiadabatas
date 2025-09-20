@@ -1,5 +1,4 @@
-https://luminszn.vercel.app/
-https://znlumins.github.io/cintakupadamutiadabatas
+https://github.com/znlumins/cintakupadamutiadabatas
 
 |My Portfolio Website
 
